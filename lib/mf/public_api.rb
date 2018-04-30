@@ -1,33 +1,17 @@
 module Mf
   module PublicApi
-    # Math infix operators
-
-    def +(b)
-      proc { |a| a + b  }
-    end
-
-    def -(b)
-      proc { |a| a - b  }
-    end
-
-    def *(b)
-      proc { |a| a * b  }
-    end
-
-    def /(b)
-      proc { |a| a / b  }
-    end
-
-    def %(b)
-      proc { |a| a % b  }
-    end
-
-    def **(b)
-      proc { |a| a ** b }
+    # Handle most operators
+    def method_missing(cmd, *args)
+      eigenclass = class << self; self; end
+      eigenclass.class_eval do
+        define_method(cmd) do |*b|
+          proc { |a| a.send(cmd, *b) }
+        end
+      end
+      send(cmd, *args)
     end
 
     # Comparators
-
     def >(b)
       proc { |a| a > b  }
     end
@@ -56,30 +40,6 @@ module Mf
 
     def ===(b)
       proc { |a| b === a }
-    end
-
-    # Bit Operators
-
-    def |(b)
-      proc { |a| a | b  }
-    end
-
-    def &(b)
-      proc { |a| a & b  }
-    end
-
-    def >>(b)
-      proc { |a| a >> b }
-    end
-
-    def <<(b)
-      proc { |a| a << b }
-    end
-
-    # Bracket Accessors
-
-    def [](b)
-      proc { |a| a[b] }
     end
   end
 end
