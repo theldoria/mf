@@ -3,9 +3,10 @@ module Mf
     # Handle most operators
     def method_missing(cmd, *args)
       eigenclass = class << self; self; end
+      cmd_sym = cmd.to_sym
       eigenclass.class_eval do
-        define_method(cmd) do |*b|
-          proc { |a| a.send(cmd, *b) }
+        define_method(cmd_sym) do |b|
+          proc { |a| a.send(cmd_sym, b) }
         end
       end
       send(cmd, *args)
